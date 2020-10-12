@@ -13,10 +13,6 @@ class NewReportMail extends Mailable
     use Queueable, SerializesModels;
 
     public $event;
-    /**
-     * @var String
-     */
-    public $attachDir;
 
     /**
      * Create a new message instance.

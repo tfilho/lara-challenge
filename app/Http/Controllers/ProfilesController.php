@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Gender;
+use App\Http\Requests\StoreProfile;
+use App\Http\Requests\UpdateProfile;
 use App\Profile;
-use Illuminate\Http\Request;
 
 class ProfilesController extends Controller
 {
@@ -20,7 +21,6 @@ class ProfilesController extends Controller
 
     public function index()
     {
-        //dd(Profile::latest()->get());
         return view('profiles.index',[
             'profiles' => Profile::latest()->get()
         ]);
@@ -33,27 +33,13 @@ class ProfilesController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreProfile $request)
     {
+        /*$profile = new Profile(request(['first_name','last_name','birthday','gender_id']));
+        $profile->save();*///TODO remove this comment
 
-        //dd($request);
-        $this->validateProfile();
-
-
-
-        $profile = new Profile(request(['first_name','last_name','birthday','gender_id']));
-        //$profiles->user_id = 1; //auth()->id() or  //auth()->user()-profiles()->create($profiles); TODO CHECK THIS
-        //dd($profiles);
-        $profile->save();
-
-        //$profiles->tags()->attach(request('tags')); TODO CHECK THIS TOO
-        /*request()->validate([
-            'title' => 'required',
-            'excerpt' => 'required',
-            'body' => 'required'
-        ]);
-
-        Profile::create($this->validateProfile());*/
+        //Is the code bellow cleaner than above? Yeah!
+        Profile::create($request->validated());
 
         return redirect(route('profiles.index'));
     }
@@ -70,10 +56,9 @@ class ProfilesController extends Controller
         ]);
     }
 
-    public function update(Profile $profile)
+    public function update(Profile $profile, UpdateProfile $request)
     {
-
-        $profile->update($this->validateProfile());
+        $profile->update($request->validated());
 
         return redirect('/profiles');
     }
@@ -83,15 +68,5 @@ class ProfilesController extends Controller
         $profile->delete();
 
         return redirect('/profiles');
-    }
-
-    public function validateProfile()
-    {
-        return request()->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'birthday' => 'required',
-            'gender_id' => 'required|exists:genders,id'
-        ]);
     }
 }

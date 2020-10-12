@@ -9,10 +9,12 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpKernel\Log\Logger;
 
 class NewReportListener implements ShouldQueue
 {
+
+    public $tries = 3;
+
     /**
      * Handle the event.
      *
@@ -23,6 +25,7 @@ class NewReportListener implements ShouldQueue
     {
         $this->createPdf($event);
         Mail::to($event->report->profile->user->email)->send(new NewReportMail($event));
+            //->later(now()->addSeconds(5),NewReportMail($event));
     }
 
     private function createPdf($event)
