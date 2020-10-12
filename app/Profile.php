@@ -2,11 +2,12 @@
 
 namespace App;
 
-use Carbon\Carbon;
 use Jenssegers\Mongodb\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 
 class Profile extends Model
 {
+    use SoftDeletes;
     /**
      * The connection name for the model.
      *

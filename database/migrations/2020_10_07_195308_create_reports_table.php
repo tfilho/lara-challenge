@@ -18,6 +18,7 @@ class CreateReportsTable extends Migration
             $table->string('profile_id');
             $table->string('topic');
             $table->text('description');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -29,6 +30,9 @@ class CreateReportsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reports');
+        //Schema::dropIfExists('reports');
+        Schema::table('reports', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 }
