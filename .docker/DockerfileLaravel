@@ -1,0 +1,39 @@
+FROM wyveo/nginx-php-fpm:php74
+
+# Add the ENTRYPOINT script
+ADD .docker/nginx/misc/start.sh /scripts/start.sh
+ADD .docker/nginx/misc/bashrc /home/tfilho/.bashrc
+ADD .docker/nginx/misc/bashrc /.bashrc
+ADD .docker/nginx/misc/bash.bashrc /etc/bash.bashrc
+#ADD old/supervisord.conf /etc/supervisord.conf
+
+RUN apt-get update && \
+    apt-get install -y autoconf pkg-config libssl-dev git libzip-dev zlib1g-dev && \
+    pecl install mongodb && \
+    #add extension=mongodb.so" to php.ini
+    #docker-php-ext-enable mongodb
+    echo "extension=mongodb.so" >> /etc/php/7.4/fpm/php.ini && \
+    echo "extension=mongodb.so" >> /etc/php/7.4/cli/php.ini && \
+    echo ""
+
+RUN usermod --password $(echo secret | openssl passwd -1 -stdin) root && \
+    chown 1000.101 -R /usr/share/nginx && \
+    #useradd -d /home/tfilho -u 1000 tfilho -s /bin/bash -g 101 && \
+    #usermod --password $(echo secret | openssl passwd -1 -stdin) tfilho && \
+    #echo "tfilho  ALL = ( ALL ) NOPASSWD: ALL" >> /etc/sudoers && \
+    #chown -R tfilho.nginx /home/tfilho && \
+    #chown -R tfilho.nginx /usr/share/nginx && \
+    #usermod -aG sudo tfilho && \
+    #sed -i "/user = .*/c\user = tfilho" /etc/php/7.4/fpm/pool.d/www.conf && \
+    #sed -i "/^group = .*/c\group = tfilho" /etc/php/7.4/fpm/pool.d/www.conf && \
+    #sed -i "/listen.owner = .*/c\listen.owner = tfilho" /etc/php/7.4/fpm/pool.d/www.conf && \
+    #sed -i "/listen.group = .*/c\listen.group = tfilho" /etc/php/7.4/fpm/pool.d/www.conf && \
+    #sed -i "/user=.*/c\user=tfilho" /etc/supervisord.conf && \
+    #sed -i "/tfilho:x.*/c\tfilho:x:0:0::/home/tfilho:/bin/bash" /etc/passwd && \
+    #sed -i "/user nginx .*/c\user tfilho;" /etc/nginx/nginx.conf && \
+    chmod +x /scripts/start.sh
+
+WORKDIR /usr/share/nginx
+
+#USER root
+
