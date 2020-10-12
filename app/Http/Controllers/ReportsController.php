@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\NewReportHasRegisteredEvent;
 use App\Events\NewReportPDFHasCreatedEvent;
+use App\Http\Requests\StoreReport;
+use App\Http\Requests\UpdateReport;
 use App\Jobs\ReportEmailJob;
 use App\Mail\OLDReportMail;
 use App\Profile;
@@ -40,10 +42,8 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreReport $request)
     {
-        $this->validateReport();
-
         $report = new Report(request(['profile_id','topic','description']));
         //$report->user_id = 1; //auth()->id() or  //auth()->user()-reports()->create($report); TODO CHECK THIS
         $report->save();
@@ -92,10 +92,10 @@ class ReportsController extends Controller
         return view('reports.edit', compact('report','profiles'));
     }
 
-    public function update(Report $report)
+    public function update(Report $report, UpdateReport $request)
     {
-
-        $report->update($this->validateReport());
+        //$user->update($request->validated());
+        $report->update($request->validated());
 
         return redirect('/reports');
     }
